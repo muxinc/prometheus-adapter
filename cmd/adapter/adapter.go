@@ -89,7 +89,10 @@ type PrometheusAdapter struct {
 func (cmd *PrometheusAdapter) makePromClient() (prom.Client, error) {
 	baseURL, err := url.Parse(cmd.PrometheusURL)
 	if err != nil {
-		return nil, fmt.Errorf("invalid Prometheus URL %q: %v", baseURL, err)
+		baseURL, err := url.Parse(os.Getenv("PROMETHEUS_URL"))
+		if err != nil {
+			return nil, fmt.Errorf("invalid Prometheus URL %q: %v", baseURL, err)
+		}
 	}
 
 	if cmd.PrometheusVerb != http.MethodGet && cmd.PrometheusVerb != http.MethodPost {
